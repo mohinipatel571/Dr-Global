@@ -1,0 +1,134 @@
+{
+  "name": "dr-global",
+  "displayName": "Dr-Global",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.62.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:dr-global.helloWorld",
+    "onCommand:dr-global.refresh",
+    "onCommand:view-load-dir.opendir",
+    "onView:view-load-dir",
+    "onView:view-load-recent",
+    "onView:view-scan-proj",
+    "onView:view-options",
+    "onLanguage:typescript",
+    "onLanguage:java",
+    "onLanguage:vue",
+    "onLanguage:javascript",
+    "*"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dr-global-sidebar-view",
+          "title": "Dr. Global",
+          "icon": "media/icons/dr-global-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "dr-global-sidebar-view": [
+        {
+          "type": "webview",
+          "id": "view-load-dir",
+          "name": "Directory",
+          "icon": "media/icons/dr-global-icon.svg",
+          "contextualTitle": "Directory Viewing"
+        },
+        {
+          "type": "webview",
+          "id": "view-options",
+          "name": "Options",
+          "contextualTitle": "Issue Options"
+        },
+        {
+          "type": "webview",
+          "id": "view-scan-proj",
+          "name": "Scan Project",
+          "contextualTitle": "Scan the remote projects"
+        },
+        {
+          "type": "webview",
+          "id": "view-load-recent",
+          "name": "Recent Projects",
+          "icon": "media/icons/dr-global-icon.svg",
+          "contextualTitle": "Directory Viewing"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "view-load-dir.opendir",
+          "when": "view == view-load-dir",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "view-load-dir.opendir",
+        "title": "Open Folder",
+        "icon": "media/icons/load_dir_img.png"
+      },
+      {
+        "command": "dr-global.helloWorld",
+        "title": "Hello There"
+      },
+      {
+        "command": "dr-global.refresh",
+        "title": "Refresh panel"
+      }
+    ],
+    "colors": [
+      {
+        "id": "drglobal.highlightLines",
+        "description": "Background decoration color for large numbers",
+        "defaults": {
+          "dark": "#FF000055",
+          "light": "#FF000055",
+          "highContrast": "#FF000055"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "npm run compile-tests && npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.4",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.62.0",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
+    "@vscode/test-electron": "^1.6.2",
+    "directory-tree": "^3.0.1",
+    "eslint": "^8.1.0",
+    "glob": "^7.1.7",
+    "mocha": "^9.1.3",
+    "ts-loader": "^9.2.5",
+    "typescript": "^4.4.4",
+    "webpack": "^5.52.1",
+    "webpack-cli": "^4.8.0"
+  },
+  "dependencies": {
+    "axios": "^0.24.0"
+  }
+}
