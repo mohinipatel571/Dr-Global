@@ -3,7 +3,7 @@ import { getRecommendationList } from "./extension";
 import { getNonce } from "./getNonce";
 import { getLoadRecentIssues } from "./RecentProjectsProvider";
 // import { pythonOps } from "./MLOps";
-const projScanConfigILP = require("../resources/project_scan_data_config.json");
+const projScanConfigILP = require("../resources/project_scan_data_config.json")
 
 
 export class IssueListingPanel {
@@ -19,13 +19,13 @@ export class IssueListingPanel {
   private _disposables: vscode.Disposable[] = [];
 
   public static isActive() {
-    let isActive = IssueListingPanel.currentPanel?._panel.active;
-    console.log("is active?: ", isActive);
+    let isActive = IssueListingPanel.currentPanel?._panel.active
+    console.log("is active?: ", isActive)
     if (isActive) {
-      return IssueListingPanel.currentPanel?._panel.active;
+      return IssueListingPanel.currentPanel?._panel.active
     }
     else {
-      return false;
+      return false
     }
   }
 
@@ -95,33 +95,33 @@ export class IssueListingPanel {
     // }, null, this._disposables);
 
     if (this._panel.active) {
-      console.log("panel is active");
+      console.log("panel is active")
       // var dfp = pythonOperations()
       // console.log("returned value from pythonOps method: ",dfp)
       // console.log("returned value type from pythonOps method: ",typeof(dfp))
-      if (from === "options_sidebar") {
+      if (from == "options_sidebar") {
         console.log("----------in if condition----------");
         
         this._panel.webview.postMessage({
           type: "add_issue_list",
           value: getRecommendationList(),
-        });
+        })
       }
       else {
         console.log("----------in else condition----------: from-:>",from);
         
-        let projName = from?.slice(from.indexOf('|')+1, from.length);
+        let projName = from?.slice(from.indexOf('|')+1, from.length)
         console.log("(from) proj name---->>> ",projName);
 
         console.log("projScanConfigILP : ",projScanConfigILP);
         
-        var rcmdList = getLoadRecentIssues(projName, projScanConfigILP);
+        var rcmdList = getLoadRecentIssues(projName, projScanConfigILP)
         console.log("load recent rcmd list (line 115 issuelistingpanel.ts): ", rcmdList);
         
         this._panel.webview.postMessage({
           type: "add_issue_list",
           value: rcmdList,
-        });
+        })
       }
     }
 
@@ -154,7 +154,7 @@ export class IssueListingPanel {
   }
 
   private async _update() {
-    console.log("in panel _update()");
+    console.log("in panel _update()")
     const webview = this._panel.webview;
     this._panel.webview.html = this._getHtmlForWebview(webview);
     webview.onDidReceiveMessage(async (data) => {
@@ -167,23 +167,23 @@ export class IssueListingPanel {
           
           vscode.workspace.openTextDocument(openPath).then(async doc => {
             
-            let line = data.value.lineNo-1;
-            let char = 0;
-            let pos1 = new vscode.Position(0, 0);
-            let pos2 = new vscode.Position(0, 0);
-            let rng = new vscode.Range(pos1, pos2);
-            let sel = new vscode.Selection(pos1,pos2);
+            let line = data.value.lineNo-1
+            let char = 0
+            let pos1 = new vscode.Position(0, 0)
+            let pos2 = new vscode.Position(0, 0)
+            let rng = new vscode.Range(pos1, pos2)
+            let sel = new vscode.Selection(pos1,pos2)
 
             // vscode.window.showTextDocument(doc, {selection: rng, viewColumn: vscode.ViewColumn.One})
 
             vscode.window.showTextDocument(doc, vscode.ViewColumn.One).then((editor: vscode.TextEditor) => {
-              editor.selection = sel;
+              editor.selection = sel
               // editor.revealRange(rng, vscode.TextEditorRevealType.InCenter)
               vscode.commands.executeCommand("cursorMove", {
                 to:"down",
                 by:"line",
                 value:line
-              });
+              })
             });
           });
           // setTimeout(()=>{

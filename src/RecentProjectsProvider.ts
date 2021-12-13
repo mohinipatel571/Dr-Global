@@ -3,7 +3,7 @@ import { ALLOWED_LANG, getContext, getCWD, retriveTreeData, writeJson } from "./
 import { getNonce } from "./getNonce";
 import { IssueListingPanel } from './IssueListingPanel';
 import { scanFile } from "./ScanProjects";
-const projScanConfig = require("../resources/project_scan_data_config.json");
+const projScanConfig = require("../resources/project_scan_data_config.json")
 
 export class RecentProjectsProvider implements vscode.WebviewViewProvider {
     _view?: vscode.WebviewView;
@@ -24,24 +24,24 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
 
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-        var projList = getProjList();
+        var projList = getProjList()
         webviewView.webview.postMessage({
             type: "show_proj",
             value: projList,
-        });
+        })
 
         webviewView.webview.onDidReceiveMessage(async (data) => {
             switch (data.type) {
                 case "show_issues": {
                     console.log("in show issues");
 
-                    let pName = data.value;
+                    let pName = data.value
                     if (IssueListingPanel.currentPanel) {
-                        IssueListingPanel.kill();
-                        IssueListingPanel.createOrShow(getContext().extensionUri, "recent_proj|" + pName);
+                        IssueListingPanel.kill()
+                        IssueListingPanel.createOrShow(getContext().extensionUri, "recent_proj|" + pName)
                     }
                     else {
-                        IssueListingPanel.createOrShow(getContext().extensionUri, "recent_proj|" + pName);
+                        IssueListingPanel.createOrShow(getContext().extensionUri, "recent_proj|" + pName)
                     }
                     break;
                 }
@@ -51,7 +51,7 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                     webviewView.webview.postMessage({
                         type: "show_proj",
                         value: getProjList(),
-                    });
+                    })
                     break;
                 }
             }
@@ -145,6 +145,7 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                             console.log(selectedProj)
                         }
                         function show(){
+                            console.log("Mona");
                             tsvscode3.postMessage({
                                 type: 'show_issues',
                                 value: selectedProj
@@ -161,10 +162,10 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
 
 export function getLoadRecentIssues(projName: string | undefined, projScanConfigILP: Array<any>) {
     var j = 0;
-    var recommendations: Array<any> = [];
+    var recommendations: Array<any> = []
     for (let i = 0; i < projScanConfigILP.length; i++) {
         const p = projScanConfigILP[i];
-        if (p.projectName === projName) {
+        if (p.projectName == projName) {
             for (let f = 0; f < p.projectData.length; f++) {
                 let fData = p.projectData[f];
 
@@ -180,22 +181,22 @@ export function getLoadRecentIssues(projName: string | undefined, projScanConfig
                         projectName: issueLine.projectName,
                         strDefaultVar: issueLine.strDefaultVar,
                         strDefaultVal: issueLine.strDefaultVal
-                    };
-                    recommendations.push(recommendationDict);
+                    }
+                    recommendations.push(recommendationDict)
                 }
             }
         }
     }
 
-    return recommendations;
+    return recommendations
 }
 
 
 function getProjList() {
-    var projList: Array<string> = [];
+    var projList: Array<string> = []
     projScanConfig.forEach((proj: any) => {
-        projList.push(proj.projectName);
+        projList.push(proj.projectName)
     });
-    return projList;
-};
+    return projList
+}
 

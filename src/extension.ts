@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 const dirTree = require("directory-tree");
 import axios, { AxiosResponse } from 'axios';
+import { RecentProjectsProvider } from './RecentProjectsProvider';
 
 export const ALLOWED_LANG: { [key: string]: string } = { "typescript": "ts", "javascript": "js", "java": "java", "vue": "vue" }
 
@@ -44,6 +45,13 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider('view-options', optionsSidebarProvider)
 	);
+
+	const loadRecent = new RecentProjectsProvider(context.extensionUri)
+	loadRecentDisposable = vscode.window.registerWebviewViewProvider('view-load-recent', loadRecent)
+	console.log("just below the load recent instance");
+	context.subscriptions.push(loadRecentDisposable)
+
+
 	const sidebarProvider = new SidebarProvider(context.extensionUri);
 	context.subscriptions.push(
 		vscode.commands.registerCommand('view-load-dir.opendir', () => {
