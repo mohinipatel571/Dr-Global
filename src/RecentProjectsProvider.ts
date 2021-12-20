@@ -13,15 +13,13 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
 
     public resolveWebviewView(webviewView: vscode.WebviewView) {
         this._view = webviewView;
-        console.log("in resolveWebviewView");
-
         webviewView.webview.options = {
             // Allow scripts in the webview
             enableScripts: true,
 
             localResourceRoots: [this._extensionUri],
         };
-
+        
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
         var projList = getProjList()
@@ -33,8 +31,6 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
         webviewView.webview.onDidReceiveMessage(async (data) => {
             switch (data.type) {
                 case "show_issues": {
-                    console.log("in show issues");
-
                     let pName = data.value
                     if (IssueListingPanel.currentPanel) {
                         IssueListingPanel.kill()
@@ -47,20 +43,22 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                 }
 
                 case "refresh": {
-                    console.log("in refresh:::", projScanConfig);
                     webviewView.webview.postMessage({
                         type: "show_proj",
                         value: getProjList(),
                     })
                     break;
                 }
+                case "delete":
+                    {
+                        deleteGetProjList(data.value)
+                        break;
+                    }
             }
         });
     }
 
     public revive(panel: vscode.WebviewView) {
-        console.log("in revive");
-
         this._view = panel;
     }
 
@@ -102,15 +100,30 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
             <style>
                 li{
                     display: block;
+                    
                 }
+                .selected {
+                    border: 2px solid blue;
+                    background-color: #3399ff;
+                    color: white;
+                    text-shadow: 0 0 3px #FF0000;
+                  }
+              
+                
             </style>
+           
             <ul id="proj-list"></ul>
             <button id="show-issues">Show Issues</button>
             <button onclick="refreshView()">Refresh</button>
+            <button onclick="deleteView()">Delete</button>
+            
         </body>
         <script nonce="${nonce}">
+
+        
             function refreshView() {
                 document.getElementById("proj-list").innerHTML = "";
+                console.log("refresh view")
 
                 tsvscode3.postMessage({
                     type: 'refresh',
@@ -130,7 +143,7 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                         for(let i=0; i<projList.length; i++){
                             let projName = projList[i]
                             let li = document.createElement("li")
-                            li.setAttribute('id',projName)  
+                            li.setAttribute('id',projName)
                             li.appendChild(document.createTextNode(projName))
                             projUL.appendChild(li)
                         }
@@ -140,12 +153,24 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                         }
                         showIssuesBtn.onclick = show
                         var selectedProj = ""
+                        
                         function itemClick(){
                             selectedProj = this.innerHTML
-                            console.log(selectedProj)
-                        }
+                           //  this.style.backgroundColor = "white";
+                             let listItems = document.getElementById("proj-list").getElementsByTagName("li");
+                             console.log(selectedProj)
+                            var length = listItems.length;
+                            for (var i = 0; i < length; i++) {
+                                listItems[i].className = "";
+                            }
+                            this.setAttribute('class','selected')
+                            localStorage.setItem("selectedProj",selectedProj);
+                          }
+                            
+                            
+                        
                         function show(){
-                            console.log("Mona");
+                            
                             tsvscode3.postMessage({
                                 type: 'show_issues',
                                 value: selectedProj
@@ -153,7 +178,15 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                         }
                 }
             });
-            
+             function deleteView(){
+                 var selectedProj = localStorage.getItem("selectedProj");
+                 console.log("delete clicked! with proj - ",selectedProj)
+                tsvscode3.postMessage({
+                    type: 'delete',
+                    value: selectedProj
+                })
+                refreshView()
+            }
             
         </script>
 			</html>`;
@@ -200,3 +233,29 @@ function getProjList() {
     return projList
 }
 
+function deleteGetProjList(currentProject: string) {
+    var projScanConfigData = projScanConfig
+    // let updateProjectList: Array<{ prrojectName: string, projectData: Array }>;
+    console.log("before deleton: ",projScanConfig);
+
+    for (let i = 0; i < projScanConfig.length; i++) {
+        const project = projScanConfig[i];
+        if(project.projectName == currentProject){
+            delete projScanConfig[i]
+            console.log("after deleton: ",projScanConfig);
+            break;
+        }
+    }
+    let updateProjectList: Array<any> = []
+    projScanConfigData.forEach((proj: any) => {
+        if (proj.projectName != currentProject) {
+            updateProjectList.push(proj)
+        }
+    });
+
+    // var projList:Array<string>=[]
+    // projScanConfig.forEach(() => {
+    //     projList.pop()
+    // });
+    writeJson(updateProjectList, getCWD(__dirname) + "\\resources\\", "project_scan_data_config.json");
+}

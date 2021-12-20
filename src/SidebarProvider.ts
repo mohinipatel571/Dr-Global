@@ -18,8 +18,8 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     webviewView.webview.options = {
       // Allow scripts in the webview
       enableScripts: true,
-
       localResourceRoots: [this._extensionUri],
+
     };
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
@@ -227,9 +227,19 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         </script>
 			</head>
       <body>
-      <div class="container"></div>
+      <style>
+      ​
+      #mybutton {
+     position: fixed;
+      
+       }
+      </style>
+      <div id="mybutton">
       <button id="btnStartScan">Start Scan</button>
-  </body>
+      </div>
+      <div class="container"></div>
+     
+      </body>
   <script nonce="${nonce}">
     const tsvscode2 = acquireVsCodeApi();
     var fileList = []
@@ -273,8 +283,10 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
     btnStartScan.onclick = function (){
       tsvscode2.postMessage({
         type: 'start_scan',
-        value: output
+        value: output ,
+         
       })
+      
     }
   </script>
 			</html>`;

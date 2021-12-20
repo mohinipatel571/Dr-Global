@@ -8,6 +8,7 @@ import * as path from 'path';
 const dirTree = require("directory-tree");
 import axios, { AxiosResponse } from 'axios';
 import { RecentProjectsProvider } from './RecentProjectsProvider';
+import { AuthenticateUser } from './AuthenticateUser';
 
 export const ALLOWED_LANG: { [key: string]: string } = { "typescript": "ts", "javascript": "js", "java": "java", "vue": "vue" }
 
@@ -50,6 +51,12 @@ export function activate(context: vscode.ExtensionContext) {
 	loadRecentDisposable = vscode.window.registerWebviewViewProvider('view-load-recent', loadRecent)
 	console.log("just below the load recent instance");
 	context.subscriptions.push(loadRecentDisposable)
+
+	var scanProj = new AuthenticateUser(context.extensionUri)
+	context.subscriptions.push(
+		vscode.window.registerWebviewViewProvider('view-scan-proj', scanProj)
+	)
+
 
 
 	const sidebarProvider = new SidebarProvider(context.extensionUri);
