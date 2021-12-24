@@ -134,7 +134,7 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
       }
     });
   }
-
+  
   processTreeData(tree_data: any) {
 
     let t = JSON.stringify(tree_data);
@@ -227,17 +227,29 @@ export class SidebarProvider implements vscode.WebviewViewProvider {
         </script>
 			</head>
       <body>
+ 
       <style>
-      ​
-      #mybutton {
-     position: fixed;
-      
-       }
+      #btnStartScan{
+        
+        position: fixed;
+        bottom: 0px;
+        left :20px;
+        width:80%;
+       
+       
+      }
+      .treejs {
+        padding-bottom:20px;
+      }
+      .pb-20{
+        padding-bottom:20px;
+      }
       </style>
-      <div id="mybutton">
+      <div class="container pb-20"></div>
+      
+     
+     
       <button id="btnStartScan">Start Scan</button>
-      </div>
-      <div class="container"></div>
      
       </body>
   <script nonce="${nonce}">

@@ -120,7 +120,7 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
         </body>
         <script nonce="${nonce}">
 
-        
+
             function refreshView() {
                 document.getElementById("proj-list").innerHTML = "";
                 console.log("refresh view")
@@ -156,7 +156,7 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                         
                         function itemClick(){
                             selectedProj = this.innerHTML
-                           //  this.style.backgroundColor = "white";
+                         
                              let listItems = document.getElementById("proj-list").getElementsByTagName("li");
                              console.log(selectedProj)
                             var length = listItems.length;
@@ -167,26 +167,28 @@ export class RecentProjectsProvider implements vscode.WebviewViewProvider {
                             localStorage.setItem("selectedProj",selectedProj);
                           }
                             
-                            
-                        
+                       
                         function show(){
                             
                             tsvscode3.postMessage({
                                 type: 'show_issues',
                                 value: selectedProj
                             })
+                           
                         }
                 }
             });
-             function deleteView(){
-                 var selectedProj = localStorage.getItem("selectedProj");
-                 console.log("delete clicked! with proj - ",selectedProj)
-                tsvscode3.postMessage({
-                    type: 'delete',
-                    value: selectedProj
-                })
-                refreshView()
-            }
+             
+        function deleteView(){
+            var selectedProj = localStorage.getItem("selectedProj");
+            console.log("delete clicked! with proj - ",selectedProj)
+           tsvscode3.postMessage({
+               type: 'delete',
+               value: selectedProj
+           })
+           refreshView()
+       }
+       
             
         </script>
 			</html>`;
@@ -198,7 +200,7 @@ export function getLoadRecentIssues(projName: string | undefined, projScanConfig
     var recommendations: Array<any> = []
     for (let i = 0; i < projScanConfigILP.length; i++) {
         const p = projScanConfigILP[i];
-        if (p.projectName == projName) {
+        if (p.projectName== projName) {
             for (let f = 0; f < p.projectData.length; f++) {
                 let fData = p.projectData[f];
 
@@ -224,7 +226,6 @@ export function getLoadRecentIssues(projName: string | undefined, projScanConfig
     return recommendations
 }
 
-
 function getProjList() {
     var projList: Array<string> = []
     projScanConfig.forEach((proj: any) => {
@@ -240,7 +241,7 @@ function deleteGetProjList(currentProject: string) {
 
     for (let i = 0; i < projScanConfig.length; i++) {
         const project = projScanConfig[i];
-        if(project.projectName == currentProject){
+        if(project.projectName== currentProject){
             delete projScanConfig[i]
             console.log("after deleton: ",projScanConfig);
             break;
